@@ -1,19 +1,19 @@
-pragma solidity ^0.8.0;
+pragma solidity >=0.8.0;
 // SPDX-License-Identifier: Apache 2.0
 
-abstract contract Context {
-    function _msgSender() internal view virtual returns (address) {
-        return msg.sender;
-    }
 
-    function _msgData() internal view virtual returns (bytes calldata) {
-        this; // silence state mutability warning without generating bytecode - see https://github.com/ethereum/solidity/issues/2691
-        return msg.data;
-    }
+interface TRC20_Interface {
+
+    function allowance(address _owner, address _spender) external view returns (uint remaining);
+
+    function transferFrom(address _from, address _to, uint _value) external returns (bool);
+
+    function transfer(address direccion, uint cantidad) external returns (bool);
+
+    function balanceOf(address who) external view returns (uint256);
+
+    function decimals() external view returns(uint);
 }
-
-pragma solidity >=0.8.0;
-
 
 library SafeMath {
 
@@ -51,57 +51,33 @@ library SafeMath {
 
 }
 
-pragma solidity >=0.8.0;
+contract Context {
+  constructor () { }
 
-interface TRC20_Interface {
+  function _msgSender() internal view virtual returns (address) {
+      return msg.sender;
+  }
 
-    function allowance(address _owner, address _spender) external view returns (uint remaining);
-
-    function transferFrom(address _from, address _to, uint _value) external returns (bool);
-
-    function transfer(address direccion, uint cantidad) external returns (bool);
-
-    function balanceOf(address who) external view returns (uint256);
-
-    function decimals() external view returns(uint);
+  function _msgData() internal view virtual returns (bytes calldata) {
+      this; 
+      return msg.data;
+  }
 }
 
-pragma solidity >=0.8.0;
-
-/**
- * @title Ownable
- * @dev The Ownable contract has an owner address, and provides basic authorization control
- * functions, this simplifies the implementation of "user permissions".
- */
-contract Ownable {
+contract Ownable is Context {
   address payable public owner;
-
 
   event OwnershipTransferred(address indexed previousOwner, address indexed newOwner);
 
-
-  /**
-   * @dev The Ownable constructor sets the original `owner` of the contract to the sender
-   * account.
-   */
   constructor(){
-    owner = payable(msg.sender);
+    owner = payable(_msgSender());
   }
 
-
-  /**
-   * @dev Throws if called by any account other than the owner.
-   */
   modifier onlyOwner() {
-    if(msg.sender != owner)revert();
+    if(_msgSender() != owner)revert();
     _;
   }
 
-
-  /**
-   * @dev Allows the current owner to transfer control of the contract to a newOwner.
-   * @param newOwner The address to transfer ownership to.
-   */
   function transferOwnership(address payable newOwner) public onlyOwner {
     if(newOwner == address(0))revert();
     emit OwnershipTransferred(owner, newOwner);
@@ -110,23 +86,18 @@ contract Ownable {
 
 }
 
-pragma solidity >=0.8.0;
-
-contract Admin is Ownable{
+contract Admin is Context, Ownable{
   mapping (address => bool) public admin;
 
-
   event NewAdmin(address indexed admin);
-
   event AdminRemoved(address indexed admin);
 
-
   constructor(){
-    admin[msg.sender] = true;
+    admin[_msgSender()] = true;
   }
 
   modifier onlyAdmin() {
-    require(admin[msg.sender]);
+    if(!admin[_msgSender()])revert();
     _;
   }
 
@@ -145,9 +116,7 @@ contract Admin is Ownable{
 
 }
 
-pragma solidity >=0.8.0;
-
-contract Market is Admin, Context{
+contract Market is Context, Admin{
   using SafeMath for uint256;
   
   address public token = 0xF0fB4a5ACf1B1126A991ee189408b112028D7A63;
