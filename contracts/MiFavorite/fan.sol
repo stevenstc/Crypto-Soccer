@@ -46,7 +46,7 @@ library SafeMath {
 
 }
 
-contract Context {
+abstract contract Context {
 
   constructor () { }
 
@@ -107,15 +107,20 @@ contract Admin is Context, Ownable{
 
 }
 
-contract Fan is Context, Admin{
+contract Voter is Context, Admin{
   using SafeMath for uint256;
 
   address token = 0x55d398326f99059fF775485246999027B3197955;
-  uint256[] fase = [1613062800, 1623438000, 1626030000, 1626047940];
+  uint256[] fase = [1635872400, 1636225200, 1636311600, 1636329540];
   uint256[] precios = [50*10**18, 75*10**18, 100*10**18]; 
   TRC20_Interface CSC_Contract = TRC20_Interface(token);
+  
+  struct Fan {
+      bool registrado;
+      bool[] items;
+  }
 
-  mapping (address => bool[]) public fans;
+  mapping (address => Fan) public fans;
 
   bool[] public items = [false, false, false, false, false];
   uint256[] public votos = [0,0,0,0,0];
@@ -125,9 +130,30 @@ contract Fan is Context, Admin{
   uint256 public pool;
 
   constructor() {
+      
+      Fan memory fan;
+      fan=Fan({
+        registrado:true,
+        items: base
+          
+      });
+      
+    fans[_msgSender()] = fan;
 
-    fans[_msgSender()] = base;
-
+  }
+  
+  function largoItems() public view returns(uint256){
+      return items.length;
+  }
+  
+  function largoFanItems(address _fan) public view returns(uint256){
+      Fan memory fan = fans[_fan];
+      return fan.items.length;
+  }
+  
+  function verFanItems(address _fan, uint256 _i) public view returns(bool){
+      Fan memory fan = fans[_fan];
+      return fan.items[_i];
   }
 
   function setGanador(uint256 _item) public onlyOwner returns(uint256){  
@@ -137,34 +163,50 @@ contract Fan is Context, Admin{
     return _item;
 
   }
+  
+  function setToken(address _tokebp20) public onlyOwner returns(address){  
+    
+    CSC_Contract = TRC20_Interface(_tokebp20);
+    token = _tokebp20;
+
+    return _tokebp20;
+
+  }
+  
+  function tiempo() public view returns(uint256){
+      return block.timestamp;
+  }
 
   function valor() public view returns(uint256) {
-      uint256 precio = 0;
-
+      
       if(block.timestamp >= fase[0] && block.timestamp < fase[1]){
-        precio = precios[0];
+        return precios[0];
 
       }
 
       if(block.timestamp >= fase[1] && block.timestamp < fase[2]){
-        precio = precios[1];
+        return precios[1];
 
       }
 
       if(block.timestamp >= fase[2] && block.timestamp < fase[3]){
-        precio = precios[2];
+        return precios[2];
 
       }
+      
+      return 0;
 
-      return (precio);
+      
 
   }
 
   function ganador() public view returns(uint256) {
+      
+      Fan memory fan = fans[_msgSender()];
 
       uint256 puntos;
       for (uint256 index = 0; index < items.length; index++) {
-          if(items[index] && fans[_msgSender()][index]){
+          if(items[index] && fan.items[index]){
             puntos = pool.div(votos[index]);
           }
           
@@ -174,21 +216,31 @@ contract Fan is Context, Admin{
       
   }
 
-  function votar(uint256 _item) public returns(uint256){  
+  function votar(uint256 _item) public returns(bool){  
+      
+      Fan storage fan = fans[_msgSender()];
 
-    if(fans[_msgSender()].length == 0){
-        fans[_msgSender()] = base;
+    if(fan.items.length != base.length){
+        fan.registrado=true;
+        fan.items= base;
+          
     }
-    if(fans[_msgSender()][_item] == true || valor() == 0)revert();
-
-    if( CSC_Contract.allowance(_msgSender(), address(this)) < valor() )revert();
-    if( CSC_Contract.balanceOf(_msgSender()) < valor() )revert();
-    if(!CSC_Contract.transferFrom(_msgSender(), address(this), valor() ))revert();
-    votos[_item]++;
-    fans[_msgSender()][_item] = true;
-    pool += valor();
     
-    return _item;
+    if(valor() > 0){
+        if(fan.items[_item] == true )revert();
+    
+        if( CSC_Contract.allowance(_msgSender(), address(this)) < valor() )revert();
+        if( CSC_Contract.balanceOf(_msgSender()) < valor() )revert();
+        if(!CSC_Contract.transferFrom(_msgSender(), address(this), valor() ))revert();
+        votos[_item]++;
+        fan.items[_item] = true;
+        pool += valor();
+        return true;
+    }else{
+        return false;
+    }
+    
+    
 
   }
 
@@ -198,7 +250,8 @@ contract Fan is Context, Admin{
     if(CSC_Contract.balanceOf(address(this)) < ganador() )revert();
     if(!CSC_Contract.transfer(_msgSender(), ganador() ) )revert();
 
-    fans[_msgSender()] = base;
+    Fan memory fan = fans[_msgSender()];
+    fan.items = base;
     return ganador();
 
   }

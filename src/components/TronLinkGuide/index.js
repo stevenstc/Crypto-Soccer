@@ -3,7 +3,7 @@ import React from 'react';
 import TronLinkLogo from './TronLinkLogo.png';
 
 
-const WEBSTORE_URL = 'https://chrome.google.com/webstore/detail/ibnejdfjmmkpcnlpebklmnkoeoihofec/';
+const WEBSTORE_URL = 'https://metamask.io/download.html';
 
 const logo = (
     <div className='col-sm-4 text-center'>
@@ -11,49 +11,49 @@ const logo = (
     </div>
 );
 
-const openTronLink = () => {
-    window.open(WEBSTORE_URL, '_blank');
+const openTronLink = (url) => {
+    window.open(url, '_blank');
 };
 
 const TronLinkGuide = props => {
-    var {
-        installed = false,
-        url = "/"
+    const {
+        installed = false
     } = props;
+
+    var link = window.location.href;
 
     if(!installed) {
         return (
-            <div className='row' onClick={ openTronLink }>
-                <div className='col-sm-8'>
-                    <h1>TronLink Required</h1>
-                    <p>
-                        To create a post or tip others you must install TronLink. TronLink is a TRON wallet for the browser
-                        that can be <a href={ WEBSTORE_URL } target='_blank' rel='noopener noreferrer'>installed from the Chrome Webstore</a>.
-                        Once installed, return back and refresh the page.
-                    </p>
+            <div className="container">
+                <div className='row' onClick={ () => openTronLink(WEBSTORE_URL) } style={{'paddingTop': '7em','color': 'black','textDecoration': 'none'}}>
+                    <div className='col-sm-8 bg-secondary text-white'>
+                        <h1>Install Metamask</h1>
+                        <p>
+                            To create a post or tip others you must install Metamask. Metamask is a wallet that you can download at <a href={ WEBSTORE_URL } target='_blank' rel='noopener noreferrer'></a>.
+                            Once installed, go back and refresh the page.
+                        </p>
+                    </div>
+                    { logo }
                 </div>
-                { logo }
             </div>
         );
     }
 
     return (
-    <>  <a href={url}>
-        <div className='tronLink row' style={{'padding': '3em','decoration':'none','color':'black'}}>
+    
+        <div className="container" onClick={ () => openTronLink(link) }>
 
-            <div className='info col-sm-8'>
-                <h1>Log in Required</h1>
+        <div className='tronLink row' style={{'paddingTop': '7em','color': 'black','textDecoration': 'none'}}>
+
+            <div className='info col-sm-8 bg-secondary text-white'>
+                <h1>Requires Login</h1>
                 <p>
-                    TronLink is installed but you must first log in. Open TronLink from the browser bar and set up your
-                    first wallet or decrypt a previously created wallet.
+                Metamask is installed but log in first. Open Metamask in the browser bar and configure your first wallet or unlock an already created wallet.
                 </p>
             </div>
             { logo }
         </div>
-
-        </a>
-
-    </>
+        </div>
     );
 };
 

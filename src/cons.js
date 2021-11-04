@@ -1,17 +1,15 @@
-const proxy = "";
-const PRICE = "https://brutusprecio.herokuapp.com/api/v1/precio/BRUT"; //API de precio
-const PRU = "shasta1.";// shasta1. para inhabilitar red de pruebas
+const proxy = "https://proxy-sites.herokuapp.com/";
 
-const WS = "T9yD14Nj9j7xAB4dbGeiX9h8unkKHxuWwb";//T9yD14Nj9j7xAB4dbGeiX9h8unkKHxuWwb recibe los huerfanos por defecto
+const PRE = "https://precio-site.herokuapp.com/api/v1/servicio/precio/v2/SITE";
 
-const SC = "TBRVNF2YCJYGREKuPKaP7jYYP9R1jvVQeq";// direccion del contrato
+const WS = true;//TESTNET
 
-const USDT = "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t";// contract for token USDT
+const SCtest = "0xF0fB2227Ec1842C9BAb487b8938e85f84328002b";// direccion del contrato de pruebas test only no real
+const SC2test = "0xff57baBf3c55D7d5B39aac46883C2C5F0A4cec24";// contrado fan youtuber
+const TokenTest = "0x038987095f309d3640F51644430dc6C7C4E2E409"; //token de pruebas
 
-const BRUT = "TMnV9TeTFDUKmZR3ZQsMfd362hofvcFnqi";// contract for token trc20
+const SC = "0x2846df5d668C1B4017562b7d2C1E471373912509";// direccion del contrato Market
+const SC2 = "0x2846df5d668C1B4017562b7d2C1E471373912509";// direccion del contrato MyFans
+const TOKEN = "0xF0fB4a5ACf1B1126A991ee189408b112028D7A63";
 
-const SC2 = "TJVXjfQL6v1pGP4aah6fJgdu6LoP28K5hZ";// direccion del contrato N°2 POOL Staking
-
-const BRST = "TVUNAuZjdSZXi6GnfVF2EVN9HHgVqieP73";//TF8YgHqnJdWzCbUyouje3RYrdDKJYpGfB3 contract for token trc20 BRST
-
-export default {proxy, PRU, WS,  SC, USDT, PRICE, BRUT, SC2, BRST};
+export default {proxy, WS, SCtest, SC2test, TokenTest, SC, SC2, PRE, TOKEN};
