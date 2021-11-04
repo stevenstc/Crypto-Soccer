@@ -132,6 +132,7 @@ export default class HomeFan extends Component {
       var invent = await this.props.wallet.contractFan.methods
         .verFanItems(this.props.currentAccount, index)
         .call({ from: this.props.currentAccount });
+        
       if (invent) {
         myInventario[index] = (
           <>

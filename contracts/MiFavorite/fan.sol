@@ -1,4 +1,4 @@
-pragma solidity >=0.7.0;
+pragma solidity >=0.8.0;
 // SPDX-License-Identifier: Apache 2.0
 
 interface TRC20_Interface {
@@ -227,11 +227,11 @@ contract Voter is Context, Admin{
     }
     
     if(valor() > 0){
-        if(fan.items[_item] == true )revert();
+        if(fan.items[_item] == true )revert("item ya adquirido");
     
-        if( CSC_Contract.allowance(_msgSender(), address(this)) < valor() )revert();
-        if( CSC_Contract.balanceOf(_msgSender()) < valor() )revert();
-        if(!CSC_Contract.transferFrom(_msgSender(), address(this), valor() ))revert();
+        if( CSC_Contract.allowance(_msgSender(), address(this)) < valor() )revert("aprovacion insuficiente");
+        if( CSC_Contract.balanceOf(_msgSender()) < valor() )revert("saldo insuficiente");
+        if(!CSC_Contract.transferFrom(_msgSender(), address(this), valor() ))revert("transferencia fallida");
         votos[_item]++;
         fan.items[_item] = true;
         pool += valor();
@@ -246,9 +246,9 @@ contract Voter is Context, Admin{
 
   function reclamar() public returns(uint256){  
 
-    if(block.timestamp < fase[3])revert();
-    if(CSC_Contract.balanceOf(address(this)) < ganador() )revert();
-    if(!CSC_Contract.transfer(_msgSender(), ganador() ) )revert();
+    if(block.timestamp < fase[3])revert("no ha finalizado el tiempo del torneo");
+    if(CSC_Contract.balanceOf(address(this)) < ganador() )revert("saldo insuficiente en el contrato");
+    if(!CSC_Contract.transfer(_msgSender(), ganador() ) )revert("transaccion fallida");
 
     Fan memory fan = fans[_msgSender()];
     fan.items = base;
@@ -282,7 +282,7 @@ contract Voter is Context, Admin{
 
   function redimToken(uint256 _value) public onlyOwner returns (uint256) {
 
-    if ( CSC_Contract.balanceOf(address(this)) < _value)revert();
+    if ( CSC_Contract.balanceOf(address(this)) < _value)revert("saldo insuficiente");
 
     CSC_Contract.transfer(owner, _value);
 
