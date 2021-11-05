@@ -7,6 +7,7 @@ export default class HomeFan extends Component {
     this.state = {
       myInventario: [],
       itemsYoutube: [],
+      balanceCSC: 0,
     };
 
     this.balance = this.balance.bind(this);
@@ -24,10 +25,15 @@ export default class HomeFan extends Component {
   }
 
   async balance() {
-    document.getElementById("getValue").innerHTML =
+    var balance =
       await this.props.wallet.contractToken.methods
         .balanceOf(this.props.currentAccount)
         .call({ from: this.props.currentAccount });
+    balance = balance.slice(0,balance.length-12);
+    balance = balance.slice(0,balance.length-6)+"."+balance.slice(balance.length-6,balance.length);
+    this.setState({
+      balanceCSC: balance
+    });
   }
 
   async votar(id) {
@@ -38,27 +44,28 @@ export default class HomeFan extends Component {
       .allowance(this.props.currentAccount, this.props.wallet.contractFan._address)
       .call({ from: this.props.currentAccount });
 
-      var balance = await this.props.wallet.contractToken.methods
-      .balanceOf(this.props.currentAccount)
+    var balance = await this.props.wallet.contractToken.methods
+    .balanceOf(this.props.currentAccount)
+    .call({ from: this.props.currentAccount });
+
+    var valor = await this.props.wallet.contractFan.methods
+      .valor()
       .call({ from: this.props.currentAccount });
 
-      var valor = await this.props.wallet.contractFan.methods
-        .valor()
-        .call({ from: this.props.currentAccount });
-      if(balance >= valor){
-        if (aprovado > 0) {
-          await this.props.wallet.contractFan.methods
-        .votar(id)
-        .send({ from: this.props.currentAccount });
-        }else{
-          await this.props.wallet.contractToken.methods
-        .approve(this.props.wallet.contractFan._address, "115792089237316195423570985008687907853269984665640564039457584007913129639935")
-        .send({ from: this.props.currentAccount });
-
-        }
+    if(balance/10**18 >= valor/10**18){
+      if (aprovado > 0) {
+        await this.props.wallet.contractFan.methods
+      .votar(id)
+      .send({ from: this.props.currentAccount });
       }else{
-        alert("insuficient Founds")
+        await this.props.wallet.contractToken.methods
+      .approve(this.props.wallet.contractFan._address, "115792089237316195423570985008687907853269984665640564039457584007913129639935")
+      .send({ from: this.props.currentAccount });
+
       }
+    }else{
+      alert("insuficient Founds")
+    }
 
     
 
@@ -201,7 +208,7 @@ export default class HomeFan extends Component {
           <div className="row text-center">
             <div className="col-md-12">
               <span>
-                Current balance: <i id="getValue">loading...</i>{" "}
+                Current balance: <i id="getValue">{this.state.balanceCSC}</i>{" "}
                 <button
                   className="btn btn-primary"
                   onClick={async () => this.balance()}
