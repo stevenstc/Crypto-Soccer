@@ -164,8 +164,8 @@ export default class HomeFan extends Component {
             <div className="container px-5">
               <div className="row">
                 <div className="col-lg-12 col-md-12 p-4 text-center" key="headitems">
-                  <h2 className=" pb-4">Vote for your favorite streamer</h2>
-                  <p>Only one (1) vote can be per streamer </p>
+                  <h2 className=" pb-4">Staking your CSC</h2>
+                  <p>Minimum stake 200 CSC </p>
                 </div>
 
                 {this.state.itemsYoutube}
