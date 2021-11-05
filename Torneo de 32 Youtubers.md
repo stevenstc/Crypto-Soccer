@@ -12,4 +12,14 @@ Cerrar apuestas el 11/07/2021 23:59 UTC = 1636329540
 
 [1635872400,1636225200,1636311600,1636329540]
 
+youtubers+juego datos cripto = 700 USD
+
+staking+apuesta par de equipos = 600 USD
+
 *El pool acumulado se debe distribuir de manera igualitaria entre los usuarios que apostaron al ganador.
+
+2085000 TOKENS CSC
+30 DÍAS DURACIÓN DW CONTRATO 
+VALOR MÍNIMO 200 CSC 
+
+SISTEMA DE APUESTAS DE EQUIPOS

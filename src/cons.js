@@ -11,7 +11,7 @@ const SC3test = "0xff57baBf3c55D7d5B39aac46883C2C5F0A4cec24";// contrado test St
 
 const TOKEN = "0xF0fB4a5ACf1B1126A991ee189408b112028D7A63";
 const SC = "0x2846df5d668C1B4017562b7d2C1E471373912509";// direccion del contrato Market
-const SC2 = "0x2846df5d668C1B4017562b7d2C1E471373912509";// direccion del contrato MyFans
-const SC3 = "0x2846df5d668C1B4017562b7d2C1E471373912509";// direccion del contrato Staking
+const SC2 = "0x0000000000000000000000000000000000000000";// direccion del contrato MyFans
+const SC3 = "0x0000000000000000000000000000000000000000";// direccion del contrato Staking
 
 export default {proxy, WS, SCtest, SC2test, SC3test, TokenTest, SC, SC2, SC3, PRE, TOKEN};
