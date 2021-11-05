@@ -226,7 +226,7 @@ contract Voter is Context, Admin{
           
     }
     
-    if(valor() > 0){
+    if(valor() > 0 &&  ganador() == 0){
         if(fan.items[_item] == true )revert("item ya adquirido");
     
         if( CSC_Contract.allowance(_msgSender(), address(this)) < valor() )revert("aprovacion insuficiente");

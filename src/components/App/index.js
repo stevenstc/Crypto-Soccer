@@ -4,6 +4,7 @@ import Web3 from "web3";
 
 import Home from "../V1Home";
 import Fan from "../HomeFan";
+import Staking from "../HomeStaking"
 import TronLinkGuide from "../TronLinkGuide";
 import cons from "../../cons"
 
@@ -14,10 +15,12 @@ import abiFan from "../../fan"
 var addressToken = cons.TOKEN;
 var addressMarket = cons.SC;
 var addressFan = cons.SC2;
+var addressStaking = cons.SC3;
 if(cons.WS){
   addressToken = cons.TokenTest;
   addressMarket = cons.SCtest;
   addressFan = cons.SC2test;
+  addressStaking = cons.SC3test;
 }
 
 
@@ -125,9 +128,12 @@ class App extends Component {
     if (!this.state.conectado) return (<TronLinkGuide installed />);
 
     switch (getString) {
-      case "v0":
+      case "youtuber":
+      case "myfavorite":
       case "fan": 
         return(<Fan wallet={this.state.binanceM} currentAccount={this.state.currentAccount}/>);
+      case "staking":
+        return(<Staking wallet={this.state.binanceM} currentAccount={this.state.currentAccount}/>);
       default:
         return(<Home wallet={this.state.binanceM} currentAccount={this.state.currentAccount}/>);
     }
