@@ -125,7 +125,7 @@ contract StakingPool is Context, Admin{
   uint public CSC_WALLET_BALANCE;
   uint public TOTAL_PARTICIPACIONES;
   uint public inicio = 1636440200;
-  uint public fin = inicio * 30 * 86400;
+  uint public fin = inicio + 30 * 86400;
   
   uint public precision = 18;
 
@@ -229,7 +229,7 @@ contract StakingPool is Context, Admin{
     if(_fin > 0){
       fin = _fin;
     }else{
-      fin = inicio * 30 * 86400;
+      fin = inicio + 30 * 86400;
     }
     return true;
   }
