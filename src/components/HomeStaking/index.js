@@ -11,11 +11,13 @@ export default class HomeStaking extends Component {
 
     this.balance = this.balance.bind(this);
     this.staking = this.staking.bind(this);
+    this.myStake = this.myStake.bind(this);
   }
 
   async componentDidMount() {
     setInterval(() => {
       this.balance();
+      this.myStake();
     }, 1 * 1000);
   }
 
@@ -57,6 +59,26 @@ export default class HomeStaking extends Component {
 
   }
 
+  async myStake() {
+
+    var rate = await this.props.wallet.contractStaking.methods
+      .RATE()
+      .call({ from: this.props.currentAccount });
+      console.log(rate);
+
+
+    var usuario = await this.props.wallet.contractStaking.methods
+      .usuarios(this.props.currentAccount)
+      .call({ from: this.props.currentAccount });
+
+      console.log(usuario);
+
+    this.setState({
+      staked: (usuario*rate/10**36).toFixed(8)
+    }) 
+    
+  }
+
   render() {
     return (
       <>
@@ -66,12 +88,27 @@ export default class HomeStaking extends Component {
               <div className="row">
                 <div className="col-lg-12 col-md-12 p-4 text-center" key="headitems">
                   <h2 className=" pb-4">Staking your CSC</h2>
-                  <p>Minimum stake 200 CSC </p>
+                  
                 </div>
 
                 <div className="col-md-12 text-center">
-                  <input type="number" id="cantidadCSC" /><br /><br />
+                  <input type="number" id="cantidadCSC" placeholder="Min stake 200 CSC"/><br /><br />
                   <button className="btn btn-warning" onClick={()=> this.staking()}>Stake CSC</button>
+
+                </div>
+
+              </div>
+
+              <div className="row mt-5">
+
+                <div className="col-md-12 text-center">
+                  <div class="card text-dark">
+
+                    <div class="card-body">
+                      <h2 className=" pb-4">My stake</h2>
+                      {this.state.staked} CSC
+                    </div>
+                  </div>
 
                 </div>
 

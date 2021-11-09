@@ -7,7 +7,7 @@ const WS = true;//TESTNET
 const TokenTest = "0x038987095f309d3640F51644430dc6C7C4E2E409"; //token de pruebas
 const SCtest = "0xF0fB2227Ec1842C9BAb487b8938e85f84328002b";// contrato test market
 const SC2test = "0xff57baBf3c55D7d5B39aac46883C2C5F0A4cec24";// contrado test fan youtuber
-const SC3test = "0xF02A6009848D0ed81F37F0b4EBFA0ac2B544ae74";// contrado test Staking
+const SC3test = "0xe225cA8269CbD3a8A869622AAcEA5A86460d9a5D";// contrado test Staking
 
 const TOKEN = "0xF0fB4a5ACf1B1126A991ee189408b112028D7A63";
 const SC = "0x2846df5d668C1B4017562b7d2C1E471373912509";// direccion del contrato Market

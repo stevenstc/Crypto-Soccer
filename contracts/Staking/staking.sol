@@ -123,11 +123,11 @@ contract StakingPool is Context, Admin{
   uint public MIN_DEPOSIT = 200 * 10**18;
   uint public TOTAL_POOL = 2085000 * 10**18;
   uint public CSC_WALLET_BALANCE;
-  uint public TOTAL_PARTICIPACIONES = 1;
+  uint public TOTAL_PARTICIPACIONES;
   uint public inicio = 1636410000;
   uint public fin = inicio * 30 * 86400;
 
-  mapping (address => Usuario) private usuarios;
+  mapping (address => Usuario) public usuarios;
 
   constructor() { }
 
@@ -155,7 +155,7 @@ contract StakingPool is Context, Admin{
     if(TOTAL_PARTICIPACIONES == 0){
       return (CSC_WALLET_BALANCE.add(CSC_POOL_BALANCE()));
     }else{
-      return (CSC_WALLET_BALANCE.add(CSC_POOL_BALANCE())).div( TOTAL_PARTICIPACIONES );
+      return (CSC_WALLET_BALANCE.add(CSC_POOL_BALANCE())).mul(10**18).div( TOTAL_PARTICIPACIONES ) ;
     }
 
   }
@@ -175,35 +175,10 @@ contract StakingPool is Context, Admin{
     return true;
 
   }
+  
+  function staking(uint _value) public returns (uint) {
 
-  function retiro(uint256 _participacion) public returns (uint256){
-
-    if(block.timestamp < fin )revert();
-
-      Usuario storage usuario = usuarios[msg.sender];
-
-      if(usuario.participacion < _participacion)revert();
-      
-      uint pago = _participacion.mul(RATE());
-      pago = pago.div(10**18);
-
-      if(CSC_WALLET_BALANCE.add(CSC_POOL_BALANCE()) < pago)revert();
-      
-      if( !CSC_Contract.transfer(msg.sender, pago) )revert();
-
-      usuario.participacion -= _participacion;
-      TOTAL_PARTICIPACIONES -= _participacion;
-      TOTAL_POOL -= CSC_POOL_BALANCE();
-      CSC_WALLET_BALANCE += CSC_POOL_BALANCE();
-      CSC_WALLET_BALANCE -= pago;
-
-      return pago;
-
-  }
-
-  function staking(uint256 _value) public returns (uint) {
-
-    if(block.timestamp > fin || block.timestamp < inicio)revert();
+    if(block.timestamp < inicio || block.timestamp > fin)revert();
     if(_value < MIN_DEPOSIT)revert();
     if( CSC_Contract.balanceOf(msg.sender) < _value )revert();
     if( !CSC_Contract.transferFrom(msg.sender, address(this), _value) )revert();
@@ -212,12 +187,49 @@ contract StakingPool is Context, Admin{
 
     _value = (_value.mul(10**18)).div(RATE());
     Usuario storage usuario = usuarios[msg.sender];
+    
     usuario.participacion += _value;
     TOTAL_PARTICIPACIONES += _value;
+    
     CSC_WALLET_BALANCE += tmp;
 
     return _value;
 
+  }
+
+  function retiro(uint _participacion) public returns (uint256){
+
+    if(block.timestamp < fin )revert();
+
+    Usuario storage usuario = usuarios[msg.sender];
+
+    if(usuario.participacion < _participacion)revert();
+    
+    uint pago = _participacion.mul(RATE());
+    pago = pago.div(10**18);
+
+    if(CSC_WALLET_BALANCE.add(CSC_POOL_BALANCE()) < pago)revert();
+    
+    if( !CSC_Contract.transfer(msg.sender, pago) )revert();
+
+    usuario.participacion -= _participacion;
+    TOTAL_PARTICIPACIONES -= _participacion;
+    TOTAL_POOL -= CSC_POOL_BALANCE();
+    CSC_WALLET_BALANCE += CSC_POOL_BALANCE();
+    CSC_WALLET_BALANCE -= pago;
+
+    return pago;
+
+  }
+
+  function actualizarFechas(uint _inicio, uint _fin) public onlyOwner returns(bool){
+    inicio = _inicio;
+    if(_fin > 0){
+      fin = _fin;
+    }else{
+      fin = inicio * 30 * 86400;
+    }
+    return true;
   }
 
   function asignarPerdida(uint _value) public onlyOwner returns(uint){
