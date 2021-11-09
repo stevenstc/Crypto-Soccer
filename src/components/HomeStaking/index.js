@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 
-export default class HomeFan extends Component {
+export default class HomeStaking extends Component {
   constructor(props) {
     super(props);
 
@@ -10,17 +10,13 @@ export default class HomeFan extends Component {
     };
 
     this.balance = this.balance.bind(this);
-    this.items = this.items.bind(this);
-    this.myItems = this.myItems.bind(this);
-    this.votar = this.votar.bind(this);
+    this.staking = this.staking.bind(this);
   }
 
   async componentDidMount() {
     setInterval(() => {
       this.balance();
-      this.items();
-      this.myItems();
-    }, 3 * 1000);
+    }, 1 * 1000);
   }
 
   async balance() {
@@ -30,130 +26,35 @@ export default class HomeFan extends Component {
         .call({ from: this.props.currentAccount });
   }
 
-  async votar(id) {
-
-    console.log(this.props.wallet.contractFan._address)
+  async staking() {
 
     var aprovado = await this.props.wallet.contractToken.methods
-      .allowance(this.props.currentAccount, this.props.wallet.contractFan._address)
+      .allowance(this.props.currentAccount, this.props.wallet.contractStaking._address)
       .call({ from: this.props.currentAccount });
 
-      var balance = await this.props.wallet.contractToken.methods
+    var balance = await this.props.wallet.contractToken.methods
       .balanceOf(this.props.currentAccount)
       .call({ from: this.props.currentAccount });
 
-      var valor = await this.props.wallet.contractFan.methods
-        .valor()
-        .call({ from: this.props.currentAccount });
-      if(balance >= valor){
-        if (aprovado > 0) {
-          await this.props.wallet.contractFan.methods
-        .votar(id)
+    var valor = document.getElementById("cantidadCSC").value;
+    valor = parseInt(valor*10**18);
+    valor = valor+"";
+
+    if(balance >= valor){
+      if (aprovado > 0) {
+        await this.props.wallet.contractStaking.methods
+        .staking(valor)
         .send({ from: this.props.currentAccount });
-        }else{
-          await this.props.wallet.contractToken.methods
-        .approve(this.props.wallet.contractFan._address, "115792089237316195423570985008687907853269984665640564039457584007913129639935")
+      }else{
+        await this.props.wallet.contractToken.methods
+        .approve(this.props.wallet.contractStaking._address, "115792089237316195423570985008687907853269984665640564039457584007913129639935")
         .send({ from: this.props.currentAccount });
 
-        }
-      }else{
-        alert("insuficient Founds")
       }
-
-    
-
-  }
-
-  async items() {
-    var itemsYoutube = [];
-
-    var result = await this.props.wallet.contractFan.methods
-      .largoItems()
-      .call({ from: this.props.currentAccount });
-
-    for (let index = 0; index < result; index++) {
-
-      var valor = await this.props.wallet.contractFan.methods
-        .valor()
-        .call({ from: this.props.currentAccount });
-
-        console.log(valor)
-
-      if(valor == 0){
-        valor = "Soon...";
-      }else{
-        valor = valor/10**18;
-      }
-
-      var votos = await this.props.wallet.contractFan.methods
-        .votos(index)
-        .call({ from: this.props.currentAccount });
-
-      itemsYoutube[index] = (
-        <>
-          <div className="col-lg-4 col-md-12 p-4 mb-5 text-center monedas" key={`items-${index}`}>
-            <h2 className=" pb-4">YouTuber #{index+1}</h2>
-            <img
-              className=" pb-4"
-              src={"assets/img/youTuber" + index + ".png"}
-              width="100%"
-              alt=""
-            />
-            <p>{votos} votes</p>
-            <div
-              className="position-relative btn-monedas"
-              onClick={() => this.votar(index)}
-            >
-              <span className="position-absolute top-50 end-0 translate-middle-y p-5">
-                {valor}
-              </span>
-            </div>
-          </div>
-        </>
-      );
+    }else{
+      alert("insuficient Founds")
     }
 
-    this.setState({
-      itemsYoutube: itemsYoutube,
-    });
-  }
-
-  async myItems() {
-    var largo = await this.props.wallet.contractFan.methods
-      .largoFanItems(this.props.currentAccount)
-      .call({ from: this.props.currentAccount });
-    var myInventario = [];
-
-    for (let index = 0; index < largo; index++) {
-      var votos = await this.props.wallet.contractFan.methods
-        .votos(index)
-        .call({ from: this.props.currentAccount });
-
-      var invent = await this.props.wallet.contractFan.methods
-        .verFanItems(this.props.currentAccount, index)
-        .call({ from: this.props.currentAccount });
-        
-      if (invent) {
-        myInventario[index] = (
-          <>
-            <div className="col-lg-4 col-md-12 p-4 mb-5 text-center monedas" key={`items-${index}`}>
-              <h2 className=" pb-4">YouTuber #{index+1}</h2>
-              <img
-                className=" pb-4"
-                src={`assets/img/youTuber${index}.png`}
-                width="100%"
-                alt=""
-              />
-              <p>{votos} global votes</p>
-            </div>
-          </>
-        );
-      }
-    }
-
-    this.setState({
-      myInventario: myInventario,
-    });
   }
 
   render() {
@@ -168,7 +69,12 @@ export default class HomeFan extends Component {
                   <p>Minimum stake 200 CSC </p>
                 </div>
 
-                {this.state.itemsYoutube}
+                <div className="col-md-12 text-center">
+                  <input type="number" id="cantidadCSC" /><br /><br />
+                  <button className="btn btn-warning" onClick={()=> this.staking()}>Stake CSC</button>
+
+                </div>
+
               </div>
             </div>
           </div>

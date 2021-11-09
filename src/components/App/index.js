@@ -11,11 +11,13 @@ import cons from "../../cons"
 import abiToken from "../../token";
 import abiMarket from "../../market";
 import abiFan from "../../fan"
+import abiStaking from "../../staking"
 
 var addressToken = cons.TOKEN;
 var addressMarket = cons.SC;
 var addressFan = cons.SC2;
 var addressStaking = cons.SC3;
+
 if(cons.WS){
   addressToken = cons.TokenTest;
   addressMarket = cons.SCtest;
@@ -94,13 +96,18 @@ class App extends Component {
         abiFan,
         addressFan
       );
+      var contractStaking = new web3.eth.Contract(
+        abiStaking,
+        addressStaking
+      );
 
       this.setState({
         binanceM:{
           web3: web3,
           contractToken: contractToken,
           contractMarket: contractMarket,
-          contractFan: contractFan
+          contractFan: contractFan,
+          contractStaking: contractStaking
         }
       })
       //web3 = new Web3(new Web3.providers.HttpProvider("https://data-seed-prebsc-1-s1.binance.org:8545/"));
