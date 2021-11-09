@@ -22,10 +22,10 @@ export default class HomeStaking extends Component {
   }
 
   async balance() {
-    document.getElementById("getValue").innerHTML =
-      await this.props.wallet.contractToken.methods
+    var val = await this.props.wallet.contractToken.methods
         .balanceOf(this.props.currentAccount)
         .call({ from: this.props.currentAccount });
+    document.getElementById("getValue").innerHTML = (val/10**18).toFixed(8);
   }
 
   async staking() {
@@ -39,13 +39,21 @@ export default class HomeStaking extends Component {
       .call({ from: this.props.currentAccount });
 
     var valor = document.getElementById("cantidadCSC").value;
-    valor = parseInt(valor*10**18);
-    valor = valor+"";
 
-    if(balance >= valor){
+    var amount = (valor*10**18).toLocaleString();
+
+    function replaceAll( text, busca, reemplaza ){
+      while (text.toString().indexOf(busca) != -1)
+          text = text.toString().replace(busca,reemplaza);
+      return text;
+    }
+
+    amount = replaceAll(amount, ".", "" );
+
+    if(balance >= parseInt(valor*10**18)){
       if (aprovado > 0) {
         await this.props.wallet.contractStaking.methods
-        .staking(valor)
+        .staking(amount)
         .send({ from: this.props.currentAccount });
       }else{
         await this.props.wallet.contractToken.methods
@@ -64,14 +72,10 @@ export default class HomeStaking extends Component {
     var rate = await this.props.wallet.contractStaking.methods
       .RATE()
       .call({ from: this.props.currentAccount });
-      console.log(rate);
-
 
     var usuario = await this.props.wallet.contractStaking.methods
       .usuarios(this.props.currentAccount)
       .call({ from: this.props.currentAccount });
-
-      console.log(usuario);
 
     this.setState({
       staked: (usuario*rate/10**36).toFixed(8)
@@ -102,9 +106,9 @@ export default class HomeStaking extends Component {
               <div className="row mt-5">
 
                 <div className="col-md-12 text-center">
-                  <div class="card text-dark">
+                  <div className="card text-dark">
 
-                    <div class="card-body">
+                    <div className="card-body">
                       <h2 className=" pb-4">My stake</h2>
                       {this.state.staked} CSC
                     </div>

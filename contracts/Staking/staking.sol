@@ -124,8 +124,10 @@ contract StakingPool is Context, Admin{
   uint public TOTAL_POOL = 2085000 * 10**18;
   uint public CSC_WALLET_BALANCE;
   uint public TOTAL_PARTICIPACIONES;
-  uint public inicio = 1636410000;
+  uint public inicio = 1636440200;
   uint public fin = inicio * 30 * 86400;
+  
+  uint public precision = 18;
 
   mapping (address => Usuario) public usuarios;
 
@@ -155,7 +157,7 @@ contract StakingPool is Context, Admin{
     if(TOTAL_PARTICIPACIONES == 0){
       return (CSC_WALLET_BALANCE.add(CSC_POOL_BALANCE()));
     }else{
-      return (CSC_WALLET_BALANCE.add(CSC_POOL_BALANCE())).mul(10**18).div( TOTAL_PARTICIPACIONES ) ;
+      return (CSC_WALLET_BALANCE.add(CSC_POOL_BALANCE())).mul(10**precision).div( TOTAL_PARTICIPACIONES ) ;
     }
 
   }
@@ -185,7 +187,7 @@ contract StakingPool is Context, Admin{
       
     uint tmp = _value;
 
-    _value = (_value.mul(10**18)).div(RATE());
+    _value = (_value.mul(10**precision)).div(RATE());
     Usuario storage usuario = usuarios[msg.sender];
     
     usuario.participacion += _value;
@@ -206,7 +208,7 @@ contract StakingPool is Context, Admin{
     if(usuario.participacion < _participacion)revert();
     
     uint pago = _participacion.mul(RATE());
-    pago = pago.div(10**18);
+    pago = pago.div(10**precision);
 
     if(CSC_WALLET_BALANCE.add(CSC_POOL_BALANCE()) < pago)revert();
     
