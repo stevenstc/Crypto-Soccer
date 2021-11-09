@@ -77,8 +77,16 @@ export default class HomeStaking extends Component {
       .usuarios(this.props.currentAccount)
       .call({ from: this.props.currentAccount });
 
+      var stake = (usuario*rate/10**36);
+
+      if (stake > 999) {
+        stake = stake.toFixed(6);
+      }else{
+        stake = stake.toFixed(8);
+      }
+
     this.setState({
-      staked: (usuario*rate/10**36).toFixed(8)
+      staked: stake
     }) 
     
   }
@@ -89,31 +97,31 @@ export default class HomeStaking extends Component {
         <header className="masthead text-center text-white">
           <div className="masthead-content">
             <div className="container px-5">
-              <div className="row">
-                <div className="col-lg-12 col-md-12 p-4 text-center" key="headitems">
-                  <h2 className=" pb-4">Staking your CSC</h2>
-                  
-                </div>
-
-                <div className="col-md-12 text-center">
-                  <input type="number" id="cantidadCSC" placeholder="Min stake 200 CSC"/><br /><br />
-                  <button className="btn btn-warning" onClick={()=> this.staking()}>Stake CSC</button>
+              <div className="row justify-content-md-center">
+                <div className="col-md-auto text-center">
+                  <h2 className=" pb-4">STAKING YOUR CSC</h2>
+                  <input type="number" className="form-control" id="cantidadCSC" placeholder="Min. 200 CSC"/><br />
+                  <button className="btn btn-warning" onClick={()=> this.staking()}><b>Stake CSC</b></button>
 
                 </div>
 
               </div>
 
-              <div className="row mt-5">
+              <div className="row justify-content-md-center mt-5">
+                <div className="col-md-auto text-center position-relative">
+                    <img src="assets/img/stake01.png" width="270px" />
+                </div>
 
-                <div className="col-md-12 text-center">
-                  <div className="card text-dark">
-
-                    <div className="card-body">
-                      <h2 className=" pb-4">My stake</h2>
-                      {this.state.staked} CSC
+                <div className="col-md-auto text-center position-relative">
+                    <img src="assets/img/STAKE.png" width="270px" />
+                    <div class="centradoStake">
+                      <h3 className=" pb-4">
+                      {this.state.staked} CSC</h3>
                     </div>
-                  </div>
+                </div>
 
+                <div className="col-md-auto text-center position-relative">
+                    <img src="assets/img/stake02.png" width="270px" />
                 </div>
 
               </div>
@@ -158,24 +166,7 @@ export default class HomeStaking extends Component {
               </span>
             </div>
           </div>
-          <hr />
-
-          <div style={{ marginTop: "30px" }} className="row text-center">
-            <div className="col-md-12">
-              <h3>Account inventory</h3>{" "}
-              <button
-                className="btn btn-primary"
-                onClick={() => this.myItems()}
-              >
-                {" "}
-                refresh
-              </button>
-            </div>
-          </div>
-
-          <div className="row text-center" id="inventory">
-            {this.state.myInventario}
-          </div>
+         
         </div>
       </>
     );

@@ -11321,7 +11321,7 @@ html {
 header.masthead {
   position: relative;
   overflow: hidden;
-  padding-top: calc(7rem + 72px);
+  padding-top: calc(4rem + 72px);
   padding-bottom: 7rem;
   background: url("../assets/img/Adobe_Post_20210917_1523050.8731757118872954.png") no-repeat fixed center;
   background-repeat: no-repeat;
@@ -11368,6 +11368,30 @@ header.masthead .bg-circle-4 {
   width: 30rem;
   top: -5rem;
   right: 35%;
+}
+
+.contenedor{
+  position: relative;
+  display: inline-block;
+  text-align: center;
+}
+
+.texto-encima{
+  position: absolute;
+  top: 250px;
+  left: 70px;
+}
+.centradoStake{
+  position: absolute;
+  top: 80%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+.centrado{
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
 
 @media (min-width: 992px) {
